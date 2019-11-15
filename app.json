@@ -24,7 +24,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.casualinc.axel",
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": "com.googleusercontent.apps.220932512200-kh5fn2vrngfkr2e9d1rgl8ti68h2f87v"
+        }
+      }
     }
   }
 }
