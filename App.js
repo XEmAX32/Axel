@@ -24,6 +24,7 @@ function cacheFonts(fonts) {
 }
 
 const MainNavigator = createStackNavigator({
+  Login: { screen: Login },
   Home: { screen: Main },
   Profile: { screen: Profile },
   Place: { screen: Place },
