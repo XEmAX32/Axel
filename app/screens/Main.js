@@ -12,8 +12,8 @@ const Main = function({navigation}){
           onPress={() => navigation.navigate('Profile')}
         >
           <View style={styles.innerTopBtn}>
-            <Text style={{color: '#29BC7E',fontSize: 25}}>Axel</Text>
-            <Text style={{color: '#707070',fontSize:15}}>Level {level}</Text>
+            <Text style={{color: '#29BC7E',fontSize: 25,fontFamily:'SF-Pro-Rounded-Medium'}}>Axel</Text>
+            <Text style={{color: '#707070',fontSize:15,fontFamily:'SF-Pro-Rounded-Medium'}}>Level {level}</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.bottomBtn}><Text style={styles.bottomBtnText}>Tap to add a report</Text></TouchableOpacity>
@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
       elevation: 5,
   },
   bottomBtnText: {
+    fontFamily:'SF-Pro-Rounded-Medium',
     color: '#FFF',
     fontSize: 15,
   },

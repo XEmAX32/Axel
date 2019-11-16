@@ -22,18 +22,18 @@ export default function Profile({navigation}){
     const kilometers = 13;
     return (
         
-        <ScrollView>
+        <ScrollView vertical showsVerticalScrollIndicator={false} bounces={false}>
             <ImageBackground source={sfondo} style={{left:-11,width:'102%',height:1152}}>
             <TouchableOpacity style={styles.topBtn} onPress={() => navigation.navigate('Home')}>
                 <ImageBackground source={sfondoMapButton} style={{width:170,height:65,alignItems:'center',justifyContent:'center'}}>
-                <Text>Map</Text>
+                <Text style={{fontFamily:'SF-Pro-Rounded-Medium',fontSize:25,color:'#707070'}}>Map</Text>
                 </ImageBackground>
             </TouchableOpacity>
 
             <View style={{left:7,flexDirection: 'column',alignItems:'center'}}>
                 <View style={[styles.box, {width: 336,height:110,backgroundColor:'#fff',opacity:.9,marginVertical:10}]}>
-                    <Text>Axel</Text>
-                    <Text>Level {level}</Text>
+                    <Text style={{fontSize:25,fontFamily:'SF-Pro-Rounded-Medium',color:'#29BC7E'}}>Axel</Text>
+                    <Text style={{fontFamily:'SF-Pro-Rounded-Medium',fontSize:15,color:'#707070'}}>Level {level}</Text>
                     <View style={{borderWidth:1, borderColor:'#707070',backgroundColor:'#fff',width:260,height:12,borderRadius:10}}>
                         <View style={{borderWidth:1, borderColor:'#707070',width:level*260/100, height:10,borderRadius:10,backgroundColor:'#4BC6C6'}}/>
                     </View>
@@ -41,21 +41,21 @@ export default function Profile({navigation}){
                 <View style={infoBoxRowStyles}>
                     <View style={infoBoxStyles}>
                         <Image style={styles.icon} source={require('../../assets/icon1.png')}/>
-                        <Text>{kilometers} km</Text>
+                        <Text style={infoText}>{kilometers} km</Text>
                     </View>
                     <View style={infoBoxStyles}>
                         <Image style={styles.icon} source={require('../../assets/icon2.png')}/>
-                        <Text>{kilometers} cal</Text>
+                        <Text style={infoText}>{kilometers} cal</Text>
                     </View>
                 </View>
                 <View style={infoBoxRowStyles}>
                     <View style={infoBoxStyles}>
                         <Image style={styles.icon} source={require('../../assets/icon3.png')}/>
-                        <Text>{kilometers} reports</Text>
+                        <Text style={infoText}>{kilometers} reports</Text>
                     </View>
                     <View style={infoBoxStyles}>
                         <Image style={styles.icon} source={require('../../assets/icon4.png')}/>
-                        <Text>{kilometers} actions</Text>
+                        <Text style={infoText}>{kilometers} actions</Text>
                     </View>
                 </View>
             </View>
@@ -65,6 +65,7 @@ export default function Profile({navigation}){
 }
 
 const infoBoxStyles={backgroundColor:'#fff', width:160, height:110, borderRadius:15, alignItems:'center', justifyContent:'center', opacity:.9}
+const infoText={fontSize:25,color:'#707070',fontFamily:'SF-Pro-Rounded-Medium'}
 const infoBoxRowStyles={flexDirection:'row', paddingVertical:10, width:'100%', justifyContent:'space-evenly'}
 
 /**
