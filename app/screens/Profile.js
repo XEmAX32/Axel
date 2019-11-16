@@ -1,4 +1,8 @@
 import React from 'react';
+
+import sfondo from '../../assets/Sfondo.png'
+import sfondoMapButton from '../../assets/map-button.png'
+
 import { 
     View,
     Text,
@@ -13,17 +17,20 @@ import {
 
 const { height, width } = Dimensions.get('window');
 
-export default function Profile(){
+export default function Profile({navigation}){
     const level = 56;
     const kilometers = 13;
     return (
-        <ScrollView style={{flex:1,backgroundColor: 'green'}}>
-            
-            <TouchableOpacity style={styles.topBtn}>
+        
+        <ScrollView>
+            <ImageBackground source={sfondo} style={{left:-11,width:'102%',height:1152}}>
+            <TouchableOpacity style={styles.topBtn} onPress={() => navigation.navigate('Home')}>
+                <ImageBackground source={sfondoMapButton} style={{width:170,height:65,alignItems:'center',justifyContent:'center'}}>
                 <Text>Map</Text>
+                </ImageBackground>
             </TouchableOpacity>
 
-            <View style={{flexDirection: 'column',alignItems:'center'}}>
+            <View style={{left:7,flexDirection: 'column',alignItems:'center'}}>
                 <View style={[styles.box, {width: 336,height:110,backgroundColor:'#fff',opacity:.9,marginVertical:10}]}>
                     <Text>Axel</Text>
                     <Text>Level {level}</Text>
@@ -52,6 +59,7 @@ export default function Profile(){
                     </View>
                 </View>
             </View>
+        </ImageBackground>
         </ScrollView>
     )
 }
@@ -70,10 +78,9 @@ const styles = StyleSheet.create({
     topBtn: {
         borderRadius: 15,
         marginTop: 70,
-        marginLeft: 20,
-        paddingHorizontal: 20,
-        paddingTop:10,
-        backgroundColor: '#FFF'
+        marginLeft: 30,
+        width:170,
+        height:65
     },
     box: {
         backgroundColor: 'rgba(256,256,256,.3)',
