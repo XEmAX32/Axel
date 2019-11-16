@@ -26,8 +26,8 @@ class Main extends React.Component {
       profile: undefined,
       POI: undefined,
       currentPOI: undefined,
-      poiBottom: new Animated.Value(-420),
-      pdpBottom: new Animated.Value(-420),
+      poiBottom: new Animated.Value(-580),
+      pdpBottom: new Animated.Value(-580),
       PDP: undefined,
       coordinate: new AnimatedRegion({latitude:0,longitude:0,longitudeDelta: 0,latitudeDelta:0})
     }
@@ -137,11 +137,11 @@ class Main extends React.Component {
 		console.log("c")
 		Animated.timing(this.state.poiBottom, {
 			duration: 500,
-			toValue: -420
+			toValue: -580
 		}).start()
 		Animated.timing(this.state.pdpBottom, {
 			duration: 500,
-			toValue: -420
+			toValue: -580
 		}).start()
 	}
   
@@ -179,7 +179,6 @@ class Main extends React.Component {
                                     ))}
                                     {this.state.PDP !== undefined && this.state.PDP.map((marker,i) => (
                                         <Marker
-                                        onPress={()=>this.openPdp(marker)}
                                           key={i}	
                                           id={marker.Id}
                                           coordinate={{latitude: Number(marker.gps.split(';')[0]), longitude: Number(marker.gps.split(';')[1])}}
@@ -205,31 +204,47 @@ class Main extends React.Component {
             <Text style={{color: '#707070',fontSize:15}}>Level {this.state.profile && Math.floor(this.state.profile.score%10)}</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bottomBtn} onPress={this.addPDP}><Text style={styles.bottomBtnText}>Tap to add a report</Text></TouchableOpacity>
-        <Animated.View style={{borderRadiusTopLeft: 15, borderRadiusTopRight: 15, position:'absolute',bottom: this.state.poiBottom,width: '100%',height: 400,backgroundColor: '#FFF'}}>
-          <View style={{borderRadiusTopLeft: 15, borderRadiusTopRight: 15,backgroundColor: '#29BC7E',flexDirection: 'row', justifyContent:'center',}}>
-            <TouchableOpacity onPress={this.closeViews}><CloseBtn style={{width:30,height:30}}/></TouchableOpacity>
-            {this.state.currentPOI !== undefined && <Text style={{color: '#FFF',fontWeight: 'bold',fontSize:25,}}>{this.state.currentPOI.Detail.en.Title}</Text>}
+        <TouchableOpacity style={styles.bottomBtn} onPress={()=>this.openPdp()}><Text style={styles.bottomBtnText}>Tap to add a report</Text></TouchableOpacity>
+        
+        <Animated.View style={{borderRadiusTopLeft: 15, borderRadiusTopRight: 15, position:'absolute',bottom: this.state.poiBottom,width:'100%',height:580,backgroundColor: '#FFF'}}>
+            <View style={{width:'100%',alignItems:'center',borderRadiusTopLeft: 15, borderRadiusTopRight: 15}}><TouchableOpacity onPress={this.closeViews}><CloseBtn style={{width:30,height:30}}/></TouchableOpacity></View>
+          <View style={{borderRadiusTopLeft: 15, borderRadiusTopRight: 15,backgroundColor: '#29BC7E',textAlign:'center',justifyContent:'center',height:70}}>
+            {this.state.currentPOI !== undefined && <Text style={{color: '#FFF',fontSize:25,fontFamily:'SF-Pro-Rounded-Medium',textAlign:"center"}}>{this.state.currentPOI.Detail.en.Title}</Text>}
           </View>
-          <ScrollView>
+          <ScrollView style={{padding:20}}>
             {this.state.currentPOI !== undefined && <HTMLView
               value={this.state.currentPOI.Detail.en.BaseText}
               stylesheet={{p: {marginTop:-25,marginBottom:-25}}}
-              style={{marginTop: 30,marginBottom:30}}
+              style={{marginTop: 30,marginBottom:30,fontFamily:'SF-Pro-Text-Medium',fontSize:15,lineHeight:20}}
             />}
             </ScrollView>
         </Animated.View>
         
         <Animated.View style={{position:'absolute',bottom: this.state.pdpBottom,width: '100%',height: 400,backgroundColor: '#FFF'}}>
-		<View style={{flexDirection: 'row'}}>
-    <TouchableOpacity onPress={this.closeViews}><CloseBtn style={{width:30,height:30}}/></TouchableOpacity>
-		<Text style={{fontWeight: 'bold', color: '#C64B4B',fontSize:25}}>Report something</Text>
+		<View style={{width:'100%',alignItems:'center',borderRadiusTopLeft: 15, borderRadiusTopRight: 15}}>
+			<TouchableOpacity onPress={this.closeViews}>
+				<CloseBtn style={{width:30,height:30}}/>
+			</TouchableOpacity>
 		</View>
-    {console.log(this.state.pdpBottom)}
-    {this.state.pdpBottom !== undefined && <Text>{this.state.pdpBottom.gps.split(';')[0]}°N {this.state.pdpBottom.gps.split(';')[1]}°E</Text>}
-		<ScrollView><Text>{this.state.currentPDP !== undefined && <Text>{this.state.currentPDP.description}</Text>}</Text></ScrollView>
-        </Animated.View>
-      </View>
+			
+		<View style={{flexDirection: 'row',left:20,fontFamily:'SF-Pro-Rounded-Medium',fontSize:25}}>
+				<Text style={{fontWeight: 'bold', color: '#C64B4B',fontSize:25}}>Report something</Text>
+		</View>
+		{this.state.coords !== undefined && <Text style={{left:20,fontFamily:'SF-Pro-Text-Medium',fontSize:15,color:'#707070'}}>{this.state.coords.latitude.toFixed(4)+'°N '+this.state.coords.longitude.toFixed(4)+'°E'}</Text>}
+		<View>
+			<Text style={{padding:20,fontFamily:'SF-Pro-Text-Medium',fontSize:15,color:'#707070',top:30}}>If you find any issue in this area including trash, pollution, or environmental problems of any kind, let us know!
+			{'\n'}You can take care of the problem by your self or report it for someone else.</Text>
+			<View style={{flexDirection:'row',alignItems:'center',justifyContent:"space-evenly",top:30}}>
+			<TouchableOpacity style={{width:160,alignItems:'center',height:70,justifyContent:"center",borderRadius:15,backgroundColor:'#C64B4B'}} >
+				<View><Text style={{color:'#fff',fontSize:15,fontFamily:'SF-Pro-Rounded-Medium'}}>I'll take care of it!</Text></View>
+			</TouchableOpacity>
+			<TouchableOpacity style={{width:160,height:70,alignItems:'center',justifyContent:"center",borderRadius:15,backgroundColor:'#707070'}} onPress={this.addPDP}>
+				<View><Text style={{color:'#fff',fontSize:15,fontFamily:'SF-Pro-Rounded-Medium'}}>Just report it.</Text></View>
+			</TouchableOpacity>
+			</View>
+		</View>
+	</Animated.View>
+	</View>
     );
   }
 }
