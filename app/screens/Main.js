@@ -14,6 +14,8 @@ import {
 } from 'react-native';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
+import HTMLView from 'react-native-htmlview';
+import CloseBtn from '../../assets/CloseIcon';
 
 const pin1 = require('../../assets/pin1.png');
 const pin2 = require('../../assets/pin2.png');
@@ -123,19 +125,6 @@ class Main extends React.Component {
     this.setState({coords: {latitude: location.coords.latitude, longitude: location.coords.longitude}})
   }
 
-<<<<<<< HEAD
-  onPressCallback (){
-    if(this.state.bottom._value === 400)
-      Animated.timing(this.state.bottom, {
-        duration: 1000,
-        toValue: -420
-      }).start()
-    else
-      Animated.timing(this.state.bottom, {
-        duration: 1000,
-        toValue: 400
-      }).start()
-=======
   openPoi=(m)=>{
 	  this.setState({currentPOI: m});
 	Animated.timing(this.state.poiBottom, {
@@ -163,7 +152,6 @@ class Main extends React.Component {
 		duration: 500,
 		toValue:0
 	}).start()
->>>>>>> b932cb9a67c3364a28703ecf71ca83653bbe09bc
   }
 
   render() {
@@ -218,19 +206,27 @@ class Main extends React.Component {
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.bottomBtn} onPress={this.addPDP}><Text style={styles.bottomBtnText}>Tap to add a report</Text></TouchableOpacity>
-        <Animated.View style={{position:'absolute',bottom: this.state.poiBottom,width: '100%',height: 400,backgroundColor: '#FFF'}}>
-          <View>
-            <Text onPress={this.closeViews} style={styles.closeBtn}>Close</Text>
-            {this.state.currentPOI !== undefined && <Text>{this.state.currentPOI.Detail.en.Title}</Text>}
+        <Animated.View style={{borderRadiusTopLeft: 15, borderRadiusTopRight: 15, position:'absolute',bottom: this.state.poiBottom,width: '100%',height: 400,backgroundColor: '#FFF'}}>
+          <View style={{borderRadiusTopLeft: 15, borderRadiusTopRight: 15,backgroundColor: '#29BC7E',flexDirection: 'row', justifyContent:'center',}}>
+            <TouchableOpacity onPress={this.closeViews}><CloseBtn style={{width:30,height:30}}/></TouchableOpacity>
+            {this.state.currentPOI !== undefined && <Text style={{color: '#FFF',fontWeight: 'bold',fontSize:25,}}>{this.state.currentPOI.Detail.en.Title}</Text>}
           </View>
-          <ScrollView><Text>{this.state.currentPOI !== undefined && <Text>{this.state.currentPOI.Detail.en.BaseText}</Text>}</Text></ScrollView>
+          <ScrollView>
+            {this.state.currentPOI !== undefined && <HTMLView
+              value={this.state.currentPOI.Detail.en.BaseText}
+              stylesheet={{p: {marginTop:-25,marginBottom:-25}}}
+              style={{marginTop: 30,marginBottom:30}}
+            />}
+            </ScrollView>
         </Animated.View>
         
         <Animated.View style={{position:'absolute',bottom: this.state.pdpBottom,width: '100%',height: 400,backgroundColor: '#FFF'}}>
-		<View>
-		<Text onPress={this.closeViews} style={styles.closeBtn}>Close</Text>
-		{this.state.currentPDP !== undefined && <Text>{this.state.currentPDP.title}</Text>}
+		<View style={{flexDirection: 'row'}}>
+    <TouchableOpacity onPress={this.closeViews}><CloseBtn style={{width:30,height:30}}/></TouchableOpacity>
+		<Text style={{fontWeight: 'bold', color: '#C64B4B',fontSize:25}}>Report something</Text>
 		</View>
+    {console.log(this.state.pdpBottom)}
+    {this.state.pdpBottom !== undefined && <Text>{this.state.pdpBottom.gps.split(';')[0]}°N {this.state.pdpBottom.gps.split(';')[1]}°E</Text>}
 		<ScrollView><Text>{this.state.currentPDP !== undefined && <Text>{this.state.currentPDP.description}</Text>}</Text></ScrollView>
         </Animated.View>
       </View>

@@ -24,10 +24,11 @@ function cacheFonts(fonts) {
 }
 
 const MainNavigator = createStackNavigator({
-  Place: { screen: Place }, 
   Login: { screen: Login },
   Home: { screen: Main },
   Profile: { screen: Profile },
+  Place: { screen: Place }, 
+
 },{
   header: null,
   headerMode: 'none'
