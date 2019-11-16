@@ -29,7 +29,8 @@ export default function Profile({navigation}){
                     </ImageBackground>
                 </TouchableOpacity>
 
-                <View style={{left:7,flexDirection: 'column',alignItems:'center'}}>
+                <View style={{left:7,flexDirection: 'column',alignItems:'center', width: width}}>
+                    <Image source={require('../../assets/alex.png')} style={{height: '100%',width:'40%'}} resizeMode="contain"/>
                     <View style={[styles.box, {width: 336,height:110,backgroundColor:'#fff',opacity:.9,marginVertical:10}]}>
                         <Text>Axel</Text>
                         <Text>Level {Math.floor(navigation.state.params.profile.score*260/100)}</Text>

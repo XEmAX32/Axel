@@ -7,7 +7,6 @@ import {
   Camera,
   MagneticObject
 } from "expo-three-ar";
-import { Interaction } from 'three.interaction';
 
 export default function App() {
   let renderer;
@@ -37,14 +36,12 @@ export default function App() {
     scene.background = new BackgroundTexture(renderer);
 
     camera = new Camera(width, height, 0.01, 1000);
-
-    const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-    const material = new THREE.MeshPhongMaterial({
-      color: 'red'
+    const stormtrooper = await ExpoTHREE.loadObjAsync({
+      asset: require('../../assets/thomas.obj'),
     });
+    
+    scene.add(stormtrooper)
 
-    cube = new THREE.Mesh(geometry, material);
-    cube.position.z = -0.4; // 40cm in front of us
     magneticObject = new MagneticObject();
     magneticObject.maintainScale = false;
     //magneticObject.maintainRotation = false;

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import {
-    View,
+    ImageBackground,
     Text,
     TouchableOpacity,
     AsyncStorage
@@ -66,8 +66,8 @@ export default function Login({navigation}) {
   };
   
   return (
-      <View style={{justifyContent:'center',alignItems:'center',flex:1}}>
-          <TouchableOpacity onPress={this.login}style={{backgroundColor:'red'}}><Text>login</Text></TouchableOpacity>
-      </View>
+      <ImageBackground style={{justifyContent:'center',alignItems:'center',flex:1}} source={require('../../assets/LoginBackground.png')}>
+          <TouchableOpacity onPress={this.login} style={{backgroundColor: '#FFF',width:100,height:100}}><ImageBackground style={{width:'100%',height:'100%'}} source={require('../../assets/loginButton.png')}><Text>login</Text></ImageBackground></TouchableOpacity>
+      </ImageBackground>
   );
 }
