@@ -17,9 +17,25 @@ import {
 const { height, width } = Dimensions.get('window');
 
 export default function Profile({navigation}){
+	
+	const [classifica,setClassifica] = React.useState()
+	
+	async function getRank() {
+		fetch('http://46.101.206.33:7080/getRanking', {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+		}).then(response => response.json().then(res => {console.log(res);setClassifica(res)}))
+	}
+	
+	React.useEffect(() => {
+		getRank();
+	}, [])
+	
     const level = 56;
-    const kilometers = 13;
-    console.log(navigation)
+    const kilometers = 1.2;
     return (
             <ScrollView style={{flex:1}}>
                 <ImageBackground source={sfondo} style={{left:-11,width:'102%',height:1152}}>
@@ -29,8 +45,8 @@ export default function Profile({navigation}){
                     </ImageBackground>
                 </TouchableOpacity>
 
-                <View style={{left:7,flexDirection: 'column',alignItems:'center', width: width}}>
-                    <Image source={require('../../assets/alex.png')} style={{height: '100%',width:'40%'}} resizeMode="contain"/>
+                <View style={{top:10,left:7,flexDirection: 'column',alignItems:'center', width: width}}>
+                    <Image source={require('../../assets/alex.png')} style={{paddingTop:50,height:350,width:300}} resizeMode="contain"/>
                     <View style={[styles.box, {width: 336,height:110,backgroundColor:'#fff',opacity:.9,marginVertical:10}]}>
                         <Text>Axel</Text>
                         <Text>Level {Math.floor(navigation.state.params.profile.score*260/100)}</Text>
@@ -59,6 +75,11 @@ export default function Profile({navigation}){
                         </View>
                     </View>
                 </View>
+                
+                {classifica &&
+                <View>
+			{classifica.map((item, key)=><Text key={key}>{item.firstName}</Text>)}
+                </View>}
             </ImageBackground>
             </ScrollView>
     )

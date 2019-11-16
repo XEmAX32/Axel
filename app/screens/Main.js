@@ -66,14 +66,14 @@ class Main extends React.Component {
   
   removePDP = async (Id=null) => {
 	  const access_token = await AsyncStorage.getItem('@User:access_token');
-	  fetch('http://46.101.206.33:7080/removePDP'+(Id?"?Id="+Id:""), {
+	  fetch('http://46.101.206.33:7080/removePDP'+(Id?"?id="+Id:""), {
 		  method: 'GET',
-	 headers: {
-		 Accept: 'application/json',
-	 'Content-Type': 'application/json',
-	 "Authorization": 'BEARER '+access_token
-	 },
-	  }).then(response => {
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json',
+			"Authorization": 'BEARER '+access_token
+		},
+	}).then(response => {
 		  
 		  alert('working')
 	  })
@@ -143,7 +143,7 @@ class Main extends React.Component {
   }
 
   openCloseMaybe=(m)=>{
-	  console.log("may")
+	  console.log("may",m)
 	  this.setState({currentPDP: m,showPop:true})
 	  Animated.timing(this.state.popTop, {
 		  duration: 500,
@@ -229,7 +229,7 @@ class Main extends React.Component {
           <Image source={require('../../assets/alex.png')} style={{height: '100%',width:'40%'}} resizeMode="contain"/>
           <View style={styles.innerTopBtn}>
             <Text style={{color: '#29BC7E',fontSize: 25}}>Alex</Text>
-            <Text style={{color: '#707070',fontSize:15}}>Level {this.state.profile && Math.floor(this.state.profile.score%10)}</Text>
+            <Text style={{color: '#707070',fontSize:15}}>Level {this.state.profile && Math.floor(this.state.profile.score)}</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.bottomBtn} onPress={()=>this.openPdp()}><Text style={styles.bottomBtnText}>Tap to add a report</Text></TouchableOpacity>
@@ -257,7 +257,7 @@ class Main extends React.Component {
 			<Text style={{fontFamily:'SF-Pro-Text-Medium',fontSize:15,color:'#fff'}}>!</Text>
 			<Text style={{fontFamily:'SF-Pro-Text-Medium',fontSize:15,color:'#fff'}}>Reported zone</Text>
 			<Text style={{fontFamily:'SF-Pro-Text-Medium',fontSize:15,color:'#fff',textAlign:'center',width:250}}>Be careful: remivung reports without actually solving the problem, will prevent others from saving this enviromnents</Text>
-			<TouchableOpacity style={{width:160,alignItems:'center',height:70,justifyContent:"center",borderRadius:15,backgroundColor:'#fff'}} onPress={()=>{this.removePDP();this.closeViews()}}>
+			<TouchableOpacity style={{width:160,alignItems:'center',height:70,justifyContent:"center",borderRadius:15,backgroundColor:'#fff'}} onPress={()=>{this.removePDP(this.state.currentPDP.id);this.closeViews()}}>
 				<View><Text style={{color:'#C64B4B',fontSize:15,fontFamily:'SF-Pro-Rounded-Medium'}}>I'll take care of it!</Text></View>
 			</TouchableOpacity>
 		</View>
