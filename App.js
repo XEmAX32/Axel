@@ -7,10 +7,10 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
 const MainNavigator = createStackNavigator({
+  Login: { screen: Login },
   Home: { screen: Main },
   Profile: { screen: Profile },
   Place: { screen: Place },
-  Login: { screen: Login },
 },{
   header: null,
   headerMode: 'none'
