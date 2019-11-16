@@ -17,6 +17,14 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "packagerOpts": {
+      "config": "metro.config.js",
+			"assetExts": [
+				"obj",
+        "fbx",
+        "dae"
+			]
+		},
     "updates": {
       "fallbackToCacheTimeout": 0
     },

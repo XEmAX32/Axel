@@ -1,7 +1,6 @@
 import React from 'react';
 import Main from './app/screens/Main';
 import Profile from './app/screens/Profile';
-import Place from './app/screens/Place';
 import Login from './app/screens/Login';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -27,8 +26,7 @@ const MainNavigator = createStackNavigator({
   Login: { screen: Login },
   Home: { screen: Main },
   Profile: { screen: Profile },
-  Place: { screen: Place },
-  Login: { screen: Login }, 
+
 },{
   header: null,
   headerMode: 'none'
@@ -44,7 +42,19 @@ class App extends React.Component {
 
 	async _loadAssetsAsync() {
 		const imageAssets = cacheImages([
-		  require('./assets/Sfondo.png')
+		  require('./assets/Sfondo.png'),
+		  require('./assets/alex.png'),
+		  require('./assets/icon1.png'),
+		  require('./assets/icon2.png'),
+		  require('./assets/icon3.png'),
+		  require('./assets/icon4.png'),
+		  require('./assets/map-button.png'),
+		  require('./assets/pin1.png'),
+		  require('./assets/pin2.png'),
+		  require('./assets/pin3.png'),
+		  require('./assets/LoginBackground.png'),
+		  require('./assets/loginButton.png')
+
 		]);
 	
 		const fontAssets = cacheFonts([{

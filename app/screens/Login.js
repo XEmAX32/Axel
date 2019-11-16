@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import {
-    View,
+    ImageBackground,
     Text,
     TouchableOpacity,
     AsyncStorage
@@ -49,7 +49,7 @@ export default function Login({navigation}) {
     const queryParams = toQueryString({
       client_id: auth0ClientId,
       redirect_uri: redirectUrl,
-      audience: 'https://api.casualinc.me/api',
+      audience: 'http://api.casualinc.me',
       response_type: 'token', // id_token will return a JWT token
       scope: 'openid profile email offline_access', // retrieve the user's profile
     });
@@ -66,8 +66,8 @@ export default function Login({navigation}) {
   };
   
   return (
-      <View style={{justifyContent:'center',alignItems:'center',flex:1}}>
-          <TouchableOpacity onPress={this.login}style={{backgroundColor:'red'}}><Text>login</Text></TouchableOpacity>
-      </View>
+      <ImageBackground style={{justifyContent:'center',alignItems:'center',flex:1}} source={require('../../assets/LoginBackground.png')}>
+          <TouchableOpacity onPress={this.login} style={{width:200,height:200}}><ImageBackground style={{width:'100%',height:'100%'}} source={require('../../assets/loginButton.png')}></ImageBackground></TouchableOpacity>
+      </ImageBackground>
   );
 }
