@@ -8,7 +8,8 @@ import {
   Image,
   Dimensions,
   AsyncStorage,
-  Platform
+  Platform,
+  Animated
 } from 'react-native';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
@@ -21,6 +22,8 @@ class Main extends React.Component {
       coords: undefined,
       profile: undefined,
       POI: undefined,
+      currentPOI: undefined,
+      bottom: new Animated.Value(-420),
       PDP: undefined,
       coordinate: new AnimatedRegion({latitude:0,longitude:0,longitudeDelta: 0,latitudeDelta:0})
     }
@@ -117,6 +120,20 @@ class Main extends React.Component {
 
     this.setState({coords: {latitude: location.coords.latitude, longitude: location.coords.longitude}})
   }
+
+  onPressCallback (){
+    if(this.state.bottom._value === 400)
+      Animated.timing(this.state.bottom, {
+        duration: 1000,
+        toValue: -100
+      }).start()
+    else
+      Animated.timing(this.state.bottom, {
+        duration: 1000,
+        toValue: 400
+      }).start()
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -134,6 +151,7 @@ class Main extends React.Component {
                                         key={i} 
                                         coordinate={{latitude: marker.GpsInfo[0].Latitude, longitude: marker.GpsInfo[0].Longitude}}
                                         title={marker.Detail.en.Title}
+                                        onPress={() => this.onPressCallback()}
                                         image={require('../../assets/pin1.png')}
                                       />
                                     ))}
@@ -164,6 +182,12 @@ class Main extends React.Component {
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.bottomBtn} onPress={this.addPDP}><Text style={styles.bottomBtnText}>Tap to add a report</Text></TouchableOpacity>
+        <Animated.View style={{position:'absolute',bottom: this.state.bottom,width: '100%',height: 400,backgroundColor: '#FFF'}}>
+          <View>
+            {this.state.currentPOI !== undefined && <Text>{this.state.currentPOI.title}</Text>}
+          </View>
+          <Text>{this.state.currentPOI !== undefined && <Text>{this.state.currentPOI.description}</Text>}</Text>
+        </Animated.View>
       </View>
     );
   }
