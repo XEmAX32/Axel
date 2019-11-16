@@ -28,8 +28,9 @@ class Main extends React.Component {
       currentPOI: undefined,
       poiBottom: new Animated.Value(-580),
       pdpBottom: new Animated.Value(-580),
+      popTop:new Animated.Value(-500),
       PDP: undefined,
-      coordinate: new AnimatedRegion({latitude:0,longitude:0,longitudeDelta: 0,latitudeDelta:0})
+      coordinate: new AnimatedRegion({latitude:0,longitude:0,longitudeDelta: 0,latitudeDelta:0}),
     }
   
   fetchData = async () => {
@@ -62,6 +63,22 @@ class Main extends React.Component {
       alert('working')
     })
   }
+  
+  removePDP = async (Id=null) => {
+	  const access_token = await AsyncStorage.getItem('@User:access_token');
+	  fetch('http://46.101.206.33:7080/removePDP'+(Id?"?Id="+Id:""), {
+		  method: 'GET',
+	 headers: {
+		 Accept: 'application/json',
+	 'Content-Type': 'application/json',
+	 "Authorization": 'BEARER '+access_token
+	 },
+	  }).then(response => {
+		  
+		  alert('working')
+	  })
+  }
+  
   
   constructor() {
     super();
@@ -125,6 +142,16 @@ class Main extends React.Component {
     this.setState({coords: {latitude: location.coords.latitude, longitude: location.coords.longitude}})
   }
 
+  openCloseMaybe=(m)=>{
+	  console.log("may")
+	  this.setState({currentPDP: m,showPop:true})
+	  Animated.timing(this.state.popTop, {
+		  duration: 500,
+		   toValue:0
+	  }).start()
+  }
+  
+  
   openPoi=(m)=>{
 	  this.setState({currentPOI: m});
 	Animated.timing(this.state.poiBottom, {
@@ -143,11 +170,10 @@ class Main extends React.Component {
 			duration: 500,
 			toValue: -580
 		}).start()
+		this.setState({showPop:false});
 	}
   
-  openPdp=(m)=>{
-	  console.log(m)
-	this.setState({currentPDP: m});
+  openPdp=()=>{
 	Animated.timing(this.state.pdpBottom, {
 		duration: 500,
 		toValue:0
@@ -157,6 +183,7 @@ class Main extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+      
         {this.state.coords !== undefined && <MapView 
                                     style={styles.mapStyle} 
                                     initialRegion={{
@@ -179,7 +206,8 @@ class Main extends React.Component {
                                     ))}
                                     {this.state.PDP !== undefined && this.state.PDP.map((marker,i) => (
                                         <Marker
-                                          key={i}	
+                                          key={i}
+                                          onPress={()=>this.openCloseMaybe(marker)}
                                           id={marker.Id}
                                           coordinate={{latitude: Number(marker.gps.split(';')[0]), longitude: Number(marker.gps.split(';')[1])}}
                                           //title={marker.Detail.en.Title}
@@ -206,7 +234,7 @@ class Main extends React.Component {
         </TouchableOpacity>
         <TouchableOpacity style={styles.bottomBtn} onPress={()=>this.openPdp()}><Text style={styles.bottomBtnText}>Tap to add a report</Text></TouchableOpacity>
         
-        <Animated.View style={{borderRadiusTopLeft: 15, borderRadiusTopRight: 15, position:'absolute',bottom: this.state.poiBottom,width:'100%',height:580,backgroundColor: '#FFF'}}>
+        <Animated.View style={{borderRadiusTopLeft: 15, borderRadiusTopRight: 15, position:'absolute',bottom: this.state.poiBottom,width:'100%',zIndex:2,height:580,backgroundColor: '#FFF'}}>
             <View style={{width:'100%',alignItems:'center',borderRadiusTopLeft: 15, borderRadiusTopRight: 15}}><TouchableOpacity onPress={this.closeViews}><CloseBtn style={{width:30,height:30}}/></TouchableOpacity></View>
           <View style={{borderRadiusTopLeft: 15, borderRadiusTopRight: 15,backgroundColor: '#29BC7E',textAlign:'center',justifyContent:'center',height:70}}>
             {this.state.currentPOI !== undefined && <Text style={{color: '#FFF',fontSize:25,fontFamily:'SF-Pro-Rounded-Medium',textAlign:"center"}}>{this.state.currentPOI.Detail.en.Title}</Text>}
@@ -218,9 +246,24 @@ class Main extends React.Component {
               style={{marginTop: 30,marginBottom:30,fontFamily:'SF-Pro-Text-Medium',fontSize:15,lineHeight:20}}
             />}
             </ScrollView>
+            
         </Animated.View>
+        {this.state.showPop &&
+        <View style={{position:'absolute',flex:1,justifyContent:'center',alignItems:'center',backgroundColor:'#fff'}}>
+		<View style={{backgroundColor:'#C64B4B',height:350,width:270,borderRadius:15,flexDirection:'column',alignItems:"center",justifyContent:"space-evenly"}}>
+			<TouchableOpacity onPress={this.closeViews}>
+				<CloseBtn style={{width:30,height:30}}/>
+			</TouchableOpacity>
+			<Text style={{fontFamily:'SF-Pro-Text-Medium',fontSize:15,color:'#fff'}}>!</Text>
+			<Text style={{fontFamily:'SF-Pro-Text-Medium',fontSize:15,color:'#fff'}}>Reported zone</Text>
+			<Text style={{fontFamily:'SF-Pro-Text-Medium',fontSize:15,color:'#fff',textAlign:'center',width:250}}>Be careful: remivung reports without actually solving the problem, will prevent others from saving this enviromnents</Text>
+			<TouchableOpacity style={{width:160,alignItems:'center',height:70,justifyContent:"center",borderRadius:15,backgroundColor:'#fff'}} onPress={()=>{this.removePDP();this.closeViews()}}>
+				<View><Text style={{color:'#C64B4B',fontSize:15,fontFamily:'SF-Pro-Rounded-Medium'}}>I'll take care of it!</Text></View>
+			</TouchableOpacity>
+		</View>
+        </View>}
         
-        <Animated.View style={{position:'absolute',bottom: this.state.pdpBottom,width: '100%',height: 400,backgroundColor: '#FFF'}}>
+        <Animated.View style={{position:'absolute',bottom: this.state.pdpBottom,width: '100%',height: 400,backgroundColor: '#FFF',zIndex:2}}>
 		<View style={{width:'100%',alignItems:'center',borderRadiusTopLeft: 15, borderRadiusTopRight: 15}}>
 			<TouchableOpacity onPress={this.closeViews}>
 				<CloseBtn style={{width:30,height:30}}/>
@@ -235,10 +278,10 @@ class Main extends React.Component {
 			<Text style={{padding:20,fontFamily:'SF-Pro-Text-Medium',fontSize:15,color:'#707070',top:30}}>If you find any issue in this area including trash, pollution, or environmental problems of any kind, let us know!
 			{'\n'}You can take care of the problem by your self or report it for someone else.</Text>
 			<View style={{flexDirection:'row',alignItems:'center',justifyContent:"space-evenly",top:30}}>
-			<TouchableOpacity style={{width:160,alignItems:'center',height:70,justifyContent:"center",borderRadius:15,backgroundColor:'#C64B4B'}} >
+			<TouchableOpacity style={{width:160,alignItems:'center',height:70,justifyContent:"center",borderRadius:15,backgroundColor:'#C64B4B'}} onPress={()=>{this.removePDP();this.closeViews()}}>
 				<View><Text style={{color:'#fff',fontSize:15,fontFamily:'SF-Pro-Rounded-Medium'}}>I'll take care of it!</Text></View>
 			</TouchableOpacity>
-			<TouchableOpacity style={{width:160,height:70,alignItems:'center',justifyContent:"center",borderRadius:15,backgroundColor:'#707070'}} onPress={this.addPDP}>
+			<TouchableOpacity style={{width:160,height:70,alignItems:'center',justifyContent:"center",borderRadius:15,backgroundColor:'#707070'}} onPress={()=>{this.addPDP();this.closeViews()}}>
 				<View><Text style={{color:'#fff',fontSize:15,fontFamily:'SF-Pro-Rounded-Medium'}}>Just report it.</Text></View>
 			</TouchableOpacity>
 			</View>

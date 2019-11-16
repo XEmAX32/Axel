@@ -34,7 +34,7 @@ export default function Profile({navigation}){
                         <Text>Axel</Text>
                         <Text>Level {Math.floor(navigation.state.params.profile.score*260/100)}</Text>
                         <View style={{borderWidth:1, borderColor:'#707070',backgroundColor:'#fff',width:260,height:12,borderRadius:10}}>
-                            <View style={{borderWidth:1, borderColor:'#707070',width:Math.floor(navigation.state.params.profile*260/100), height:10,borderRadius:10,backgroundColor:'#4BC6C6'}}/>
+                            <View style={{borderWidth:1, borderColor:'#707070',width:navigation.state.params.profile.score*2.6, height:10,borderRadius:10,backgroundColor:'#4BC6C6'}}/>
                         </View>
                     </View>
                     <View style={infoBoxRowStyles}>
