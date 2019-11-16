@@ -151,7 +151,7 @@ class Main extends React.Component {
                                         key={i} 
                                         coordinate={{latitude: marker.GpsInfo[0].Latitude, longitude: marker.GpsInfo[0].Longitude}}
                                         title={marker.Detail.en.Title}
-                                        onPress={() => this.onPressCallback()}
+                                        onPress={(marker) => {this.setState({currentPOI: marker}); this.onPressCallback()}}
                                         image={require('../../assets/pin1.png')}
                                       />
                                     ))}
