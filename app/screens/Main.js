@@ -125,7 +125,7 @@ class Main extends React.Component {
     if(this.state.bottom._value === 400)
       Animated.timing(this.state.bottom, {
         duration: 1000,
-        toValue: -100
+        toValue: -420
       }).start()
     else
       Animated.timing(this.state.bottom, {
@@ -173,12 +173,12 @@ class Main extends React.Component {
         }
         <TouchableOpacity 
           style={styles.topBtn}
-          onPress={() => this.props.navigation.navigate('Profile')}
+          onPress={() => this.props.navigation.navigate('Profile', {profile:this.state.profile})}
         >
           <Image source={require('../../assets/alex.png')} style={{height: '100%',width:'40%'}} resizeMode="contain"/>
           <View style={styles.innerTopBtn}>
             <Text style={{color: '#29BC7E',fontSize: 25}}>Alex</Text>
-            <Text style={{color: '#707070',fontSize:15}}>Level {this.state.profile && this.state.profile.score}</Text>
+            <Text style={{color: '#707070',fontSize:15}}>Level {this.state.profile && Math.floor(this.state.profile.score%10)}</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.bottomBtn} onPress={this.addPDP}><Text style={styles.bottomBtnText}>Tap to add a report</Text></TouchableOpacity>

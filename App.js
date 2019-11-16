@@ -24,10 +24,10 @@ function cacheFonts(fonts) {
 }
 
 const MainNavigator = createStackNavigator({
+  Place: { screen: Place }, 
   Login: { screen: Login },
   Home: { screen: Main },
   Profile: { screen: Profile },
-  Place: { screen: Place },
 },{
   header: null,
   headerMode: 'none'
@@ -43,7 +43,17 @@ class App extends React.Component {
 
 	async _loadAssetsAsync() {
 		const imageAssets = cacheImages([
-		  require('./assets/Sfondo.png')
+		  require('./assets/Sfondo.png'),
+		  require('./assets/alex.png'),
+		  require('./assets/icon1.png'),
+		  require('./assets/icon2.png'),
+		  require('./assets/icon3.png'),
+		  require('./assets/icon4.png'),
+		  require('./assets/map-button.png'),
+		  require('./assets/pin1.png'),
+		  require('./assets/pin2.png'),
+		  require('./assets/pin3.png')
+
 		]);
 	
 		const fontAssets = cacheFonts([{
