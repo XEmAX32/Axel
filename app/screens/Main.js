@@ -12,6 +12,7 @@ const Main = function({navigation}){
   const [markers, setMarkers] = useState();
   const [profile, setProfile] = useState();
   useEffect(() => {
+    //fetch('http://46.101.206.33:7080/getProfile')
     getLocationAsync();
   }, []);
 
