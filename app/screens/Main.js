@@ -1,12 +1,14 @@
 import React, {useEffect,useState} from 'react';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, AnimatedRegion } from 'react-native-maps';
 import { 
   StyleSheet, 
   Text, 
   TouchableOpacity, 
   View, 
+  Image,
   Dimensions,
-  AsyncStorage 
+  AsyncStorage,
+  Platform
 } from 'react-native';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
@@ -14,13 +16,16 @@ import * as Permissions from 'expo-permissions';
 const pin1 = require('../../assets/pin1.png');
 const pin2 = require('../../assets/pin2.png');
 
-const Main = function({navigation}){
-  const [coords,setCoords] = useState();
-  const [POI, setPOI] = useState();
-  const [PDP, setPDP] = useState();
-  const [profile, setProfile] = useState();
-
-  const fetchData = async () => {
+class Main extends React.Component {
+  state = {
+      coords: undefined,
+      profile: undefined,
+      POI: undefined,
+      PDP: undefined,
+      coordinate: new AnimatedRegion({latitude:0,longitude:0,longitudeDelta: 0,latitudeDelta:0})
+    }
+  
+  fetchData = async () => {
     const access_token = await AsyncStorage.getItem('@User:access_token');
 
     fetch('http://46.101.206.33:7080/profile', {
@@ -32,13 +37,13 @@ const Main = function({navigation}){
       }
     }).then(response => {
 
-      response.json().then(res => setProfile(res))
+      response.json().then(res => this.setState({profile: res}))
     })
   }
 
-  const addPDP = async () => {
+  addPDP = async () => {
     const access_token = await AsyncStorage.getItem('@User:access_token');
-    fetch('http://46.101.206.33:7080/addPDP?gps='+coords.latitude+";"+coords.longitude, {
+    fetch('http://46.101.206.33:7080/addPDP?gps='+this.state.coords.latitude+";"+this.state.coords.longitude, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -51,13 +56,47 @@ const Main = function({navigation}){
     })
   }
   
+  constructor() {
+    super();
+    this.fetchData();
+    this.getLocationAsync();
 
-  useEffect(() => {
-    
-    fetchData();
+  }
 
-    getLocationAsync();
-  }, []);
+  componentWillUnmount() {
+    this.location.remove();
+  }
+
+  addEventListener = async () => {
+    this.location = await Location.watchPositionAsync(
+      {
+          enableHighAccuracy: true,
+          distanceInterval: 1,
+          timeInterval: 10000
+      }, (nextProps) => {
+      const duration = 500
+      if (this.state.coordinate.latitude !== nextProps.coords.latitude || this.state.coordinate.longitude !== nextProps.coords.longitude) {
+        //this.setState({coordinate: {latitude:nextProps.coords.latitude,longitude:nextProps.coords.longitude}})
+          if (Platform.OS === 'android') {
+            if (this.marker) {
+              this.marker._component.animateMarkerToCoordinate(
+                nextProps.coordinate,
+                duration
+              );
+            }
+          } else {
+            this.state.coordinate.timing({
+              ...nextProps.coords,
+              duration
+            }).start();
+        }
+      }
+    })
+  }
+
+  componentDidMount() {
+    this.addEventListener()
+  }
 
   getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -65,7 +104,7 @@ const Main = function({navigation}){
     const access_token = await AsyncStorage.getItem('@User:access_token');
 
     fetch('http://46.101.206.33:7080/getPOI?longitude='+location.coords.longitude+'&latitude='+location.coords.latitude).then((response) => {
-      response.json().then(res => {setPOI(res)})
+      response.json().then(res => {this.setState({POI: res})})
     })
     fetch('http://46.101.206.33:7080/getPDP', {
       method: 'GET',
@@ -74,23 +113,23 @@ const Main = function({navigation}){
         'Content-Type': 'application/json',
         "Authorization": 'BEARER '+access_token
       },
-    }).then(response => response.json().then(res => setPDP(res)))
+    }).then(response => response.json().then(res => this.setState({PDP: res})))
 
-    setCoords({latitude: location.coords.latitude, longitude: location.coords.longitude})
+    this.setState({coords: {latitude: location.coords.latitude, longitude: location.coords.longitude}})
   }
-
-  return (
+  render() {
+    return (
       <View style={styles.container}>
-        {coords !== undefined && <MapView 
+        {this.state.coords !== undefined && <MapView 
                                     style={styles.mapStyle} 
                                     initialRegion={{
-                                      latitude: coords.latitude, 
-                                      longitude: coords.longitude,
+                                      latitude: this.state.coords.latitude, 
+                                      longitude: this.state.coords.longitude,
                                       latitudeDelta: 0.09,
                                       longitudeDelta: 0.09
                                     }}
                                   >
-                                    {POI !== undefined && POI.Items.map((marker,i) => (
+                                    {this.state.POI !== undefined && this.state.POI.Items.map((marker,i) => (
                                       <Marker
                                         key={i} 
                                         coordinate={{latitude: marker.GpsInfo[0].Latitude, longitude: marker.GpsInfo[0].Longitude}}
@@ -98,31 +137,36 @@ const Main = function({navigation}){
                                         image={require('../../assets/pin1.png')}
                                       />
                                     ))}
-                                    {PDP !== undefined && console.log({latitude: Number(PDP[0].gps.split(';')[0]), longitude: Number(PDP[0].gps.split(';')[1])})}
-                                    {
-                                      PDP !== undefined && PDP.map((marker,i) => {
+                                    {this.state.PDP !== undefined && this.state.PDP.map((marker,i) => (
                                         <Marker
                                           key={i} 
                                           coordinate={{latitude: Number(marker.gps.split(';')[0]), longitude: Number(marker.gps.split(';')[1])}}
                                           //title={marker.Detail.en.Title}
                                           image={require('../../assets/pin2.png')}
                                         />
-                                      })
+                                    ))
                                     }
+                                    <Marker.Animated
+                                      ref={marker => { this.marker = marker }}
+                                      coordinate={this.state.coordinate}
+                                      image={require('../../assets/pin3.png')}
+                                    />
                                   </MapView>
         }
         <TouchableOpacity 
           style={styles.topBtn}
-          onPress={() => navigation.navigate('Profile')}
+          onPress={() => this.props.navigation.navigate('Profile')}
         >
+          <Image source={require('../../assets/alex.png')} style={{height: '100%',width:'40%'}} resizeMode="contain"/>
           <View style={styles.innerTopBtn}>
-            <Text style={{color: '#29BC7E',fontSize: 25}}>Axel</Text>
-            <Text style={{color: '#707070',fontSize:15}}>Level {profile && profile.score}</Text>
+            <Text style={{color: '#29BC7E',fontSize: 25}}>Alex</Text>
+            <Text style={{color: '#707070',fontSize:15}}>Level {this.state.profile && this.state.profile.score}</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bottomBtn} onPress={addPDP}><Text style={styles.bottomBtnText}>Tap to add a report</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.bottomBtn} onPress={this.addPDP}><Text style={styles.bottomBtnText}>Tap to add a report</Text></TouchableOpacity>
       </View>
     );
+  }
 }
 
 export default Main;
@@ -163,9 +207,10 @@ const styles = StyleSheet.create({
   },
   topBtn: {
       position: 'absolute',
-
+      flexDirection: 'row',
       backgroundColor: '#FFF',
       top: 70,
+      width:170,
       left: 20,
       borderRadius: 15,
       padding: 5,
