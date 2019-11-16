@@ -9,7 +9,8 @@ import {
   Dimensions,
   AsyncStorage,
   Platform,
-  Animated
+  Animated,
+  ScrollView
 } from 'react-native';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
@@ -23,7 +24,8 @@ class Main extends React.Component {
       profile: undefined,
       POI: undefined,
       currentPOI: undefined,
-      bottom: new Animated.Value(-420),
+      poiBottom: new Animated.Value(-420),
+      pdpBottom: new Animated.Value(-420),
       PDP: undefined,
       coordinate: new AnimatedRegion({latitude:0,longitude:0,longitudeDelta: 0,latitudeDelta:0})
     }
@@ -121,17 +123,33 @@ class Main extends React.Component {
     this.setState({coords: {latitude: location.coords.latitude, longitude: location.coords.longitude}})
   }
 
-  onPressCallback (){
-    if(this.state.bottom._value === 400)
-      Animated.timing(this.state.bottom, {
-        duration: 1000,
-        toValue: -100
-      }).start()
-    else
-      Animated.timing(this.state.bottom, {
-        duration: 1000,
-        toValue: 400
-      }).start()
+  openPoi=(m)=>{
+	  this.setState({currentPOI: m});
+	Animated.timing(this.state.poiBottom, {
+		duration: 500,
+		toValue:0
+	}).start()
+  }
+  
+	closeViews=()=>{
+		console.log("c")
+		Animated.timing(this.state.poiBottom, {
+			duration: 500,
+			toValue: -420
+		}).start()
+		Animated.timing(this.state.pdpBottom, {
+			duration: 500,
+			toValue: -420
+		}).start()
+	}
+  
+  openPdp=(m)=>{
+	  console.log(m)
+	this.setState({currentPDP: m});
+	Animated.timing(this.state.pdpBottom, {
+		duration: 500,
+		toValue:0
+	}).start()
   }
 
   render() {
@@ -148,16 +166,20 @@ class Main extends React.Component {
                                   >
                                     {this.state.POI !== undefined && this.state.POI.Items.map((marker,i) => (
                                       <Marker
-                                        key={i} 
+                                        key={i}
+                                        id={marker.Id}
+                                        Title={marker.Detail.en.Title}
                                         coordinate={{latitude: marker.GpsInfo[0].Latitude, longitude: marker.GpsInfo[0].Longitude}}
                                         title={marker.Detail.en.Title}
-                                        onPress={(marker) => {this.setState({currentPOI: marker}); this.onPressCallback()}}
+                                        onPress={()=>this.openPoi(marker)}
                                         image={require('../../assets/pin1.png')}
                                       />
                                     ))}
                                     {this.state.PDP !== undefined && this.state.PDP.map((marker,i) => (
                                         <Marker
-                                          key={i} 
+                                        onPress={()=>this.openPdp(marker)}
+                                          key={i}	
+                                          id={marker.Id}
                                           coordinate={{latitude: Number(marker.gps.split(';')[0]), longitude: Number(marker.gps.split(';')[1])}}
                                           //title={marker.Detail.en.Title}
                                           image={require('../../assets/pin2.png')}
@@ -182,11 +204,20 @@ class Main extends React.Component {
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.bottomBtn} onPress={this.addPDP}><Text style={styles.bottomBtnText}>Tap to add a report</Text></TouchableOpacity>
-        <Animated.View style={{position:'absolute',bottom: this.state.bottom,width: '100%',height: 400,backgroundColor: '#FFF'}}>
+        <Animated.View style={{position:'absolute',bottom: this.state.poiBottom,width: '100%',height: 400,backgroundColor: '#FFF'}}>
           <View>
-            {this.state.currentPOI !== undefined && <Text>{this.state.currentPOI.title}</Text>}
+            <Text onPress={this.closeViews} style={styles.closeBtn}>Close</Text>
+            {this.state.currentPOI !== undefined && <Text>{this.state.currentPOI.Detail.en.Title}</Text>}
           </View>
-          <Text>{this.state.currentPOI !== undefined && <Text>{this.state.currentPOI.description}</Text>}</Text>
+          <ScrollView><Text>{this.state.currentPOI !== undefined && <Text>{this.state.currentPOI.Detail.en.BaseText}</Text>}</Text></ScrollView>
+        </Animated.View>
+        
+        <Animated.View style={{position:'absolute',bottom: this.state.pdpBottom,width: '100%',height: 400,backgroundColor: '#FFF'}}>
+		<View>
+		<Text onPress={this.closeViews} style={styles.closeBtn}>Close</Text>
+		{this.state.currentPDP !== undefined && <Text>{this.state.currentPDP.title}</Text>}
+		</View>
+		<ScrollView><Text>{this.state.currentPDP !== undefined && <Text>{this.state.currentPDP.description}</Text>}</Text></ScrollView>
         </Animated.View>
       </View>
     );
@@ -250,5 +281,9 @@ const styles = StyleSheet.create({
   },
   innerTopBtn: {
     flexDirection: 'column'
+  },
+  closeBtn:{
+	  right:0,
+	  top:3
   }
 });
