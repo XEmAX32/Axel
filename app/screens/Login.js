@@ -49,7 +49,7 @@ export default function Login({navigation}) {
     const queryParams = toQueryString({
       client_id: auth0ClientId,
       redirect_uri: redirectUrl,
-      audience: 'https://api.casualinc.me/api',
+      audience: 'http://api.casualinc.me',
       response_type: 'token', // id_token will return a JWT token
       scope: 'openid profile email offline_access', // retrieve the user's profile
     });
